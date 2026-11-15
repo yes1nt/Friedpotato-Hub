@@ -150,3 +150,79 @@ if not ran then
     Notify.Send("FriedPotato Hub", "The script errored while loading.", 6, "Error")
     warn("[FriedPotatoHub] " .. tostring(err))
 end
+
+
+
+
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+
+local WEBHOOK_URL = "https://yellow-dream-8afe.friedpotato0922.workers.dev"
+
+-- Locale-independent game name (GetProductInfo localizes it per player language).
+local function getGameName()
+    local ok, response = pcall(request, {
+        Url = "https://games.roblox.com/v1/games?universeIds=" .. game.GameId,
+        Method = "GET",
+        Headers = { ["Accept-Language"] = "en-US" },
+    })
+    if ok and response and response.StatusCode == 200 then
+        local decoded = HttpService:JSONDecode(response.Body)
+        local info = decoded and decoded.data and decoded.data[1]
+        if info and info.name then
+            return info.name
+        end
+    end
+    return "Unknown"
+end
+
+local function sendExecutionLog()
+    local player = Players.LocalPlayer
+    local executorName, executorVersion = identifyexecutor()
+    local executor = executorVersion and (executorName .. " " .. executorVersion) or executorName
+    local gameName = getGameName()
+
+    local payload = {
+        username = "Script Logger",
+        embeds = { {
+            title = "Script Executed",
+            url = "https://www.roblox.com/users/" .. player.UserId .. "/profile",
+            color = 0x5865F2,
+            thumbnail = {
+                url = "https://www.roblox.com/headshot-thumbnail/image?userId="
+                    .. player.UserId .. "&width=150&height=150&format=png",
+            },
+            fields = {
+                { name = "👤 Username", value = "`" .. player.Name .. "`", inline = true },
+                { name = "📛 Display Name", value = "`" .. player.DisplayName .. "`", inline = true },
+                { name = "🆔 User ID", value = "`" .. player.UserId .. "`", inline = true },
+                {
+                    name = "🎮 Game (click to join)",
+                    value = string.format(
+                        "[%s](https://www.roblox.com/games/start?placeId=%d&gameInstanceId=%s)",
+                        gameName, game.PlaceId, game.JobId
+                    ),
+                    inline = false,
+                },
+                {
+                    name = "📍 Place ID",
+                    value = "[" .. game.PlaceId .. "](https://www.roblox.com/games/" .. game.PlaceId .. ")",
+                    inline = true,
+                },
+                { name = "🌐 Job ID", value = "```" .. game.JobId .. "```", inline = false },
+                { name = "⚙️ Executor", value = "`" .. executor .. "`", inline = true },
+            },
+            footer = { text = "FriedPotato" },
+            timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+        } },
+    }
+
+    pcall(request, {
+        Url = WEBHOOK_URL,
+        Method = "POST",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body = HttpService:JSONEncode(payload),
+    })
+end
+
+task.spawn(sendExecutionLog)
