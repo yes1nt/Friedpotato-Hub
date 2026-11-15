@@ -225,8 +225,16 @@ if not (compiled and chunk) then
     return
 end
 
+
 local ran, err = pcall(chunk)
-if not ran then
+if ran then
+    Notify.Send(
+        "FriedPotato Hub",
+        "Welcome, " .. Players.LocalPlayer.DisplayName .. "! Script loaded successfully.",
+        5,
+        "Success"
+    )
+else
     Notify.Send("FriedPotato Hub", "The script errored while loading.", 6, "Error")
     warn("[FriedPotatoHub] " .. tostring(err))
 end
