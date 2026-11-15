@@ -3,6 +3,8 @@ local GameLoaders = {
     [1234567890] = "https://another-script-link-here",
 }
 
+
+
 local StarterGui = game:GetService("StarterGui")
 local function Notify(title, text, duration)
     pcall(function()
@@ -32,7 +34,6 @@ if not (compiled and chunk) then
     Notify("FriedPotato Hub", "The script failed to compile.")
     return
 end
-
 local ran, err = pcall(chunk)
 if not ran then
     Notify("FriedPotato Hub", "The script errored while loading.")
