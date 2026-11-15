@@ -3,6 +3,8 @@ local GameLoaders = {
     [1234567890] = "https://another-script-link-here",
 }
 
+repeat task.wait() until game.PlaceId ~= 0
+
 local ScriptURL = GameLoaders[game.PlaceId]
 
 if ScriptURL then
