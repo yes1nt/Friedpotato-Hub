@@ -1,4 +1,4 @@
-getgenv().GameLoaders or {
+getgenv().GameLoaders = {
     [000000] = "https://your-script-link-here",
     [000000] = "https://another-script-link-here",
 }
