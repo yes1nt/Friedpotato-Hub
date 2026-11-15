@@ -7,7 +7,7 @@ getgenv().GameLoaders = {
     [2380077519] = "https://api.jnkie.com/api/v1/luascripts/public/771ef7f62d576e9f0e30ca25bf98561cdbfdf58bed9270e45e69cbe445c1eed7/download",
     -- Throw food for animals
     [10766972131] = "https://api.jnkie.com/api/v1/luascripts/public/3ebaf12c88fae3f572d7793dce0aba192d5225f60fdbf9b64256587c4fa62622/download",
-    -- Steal An Egg (Patched)
+    -- Steal An Egg
     [10563114921] = "https://api.jnkie.com/api/v1/luascripts/public/30f7d9cb5779873280e3ddd3223b1c906de274b80abd03223d1f41fb738ea57e/download",
     -- Test
     [1234567890] = "Link",
