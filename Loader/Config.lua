@@ -1,0 +1,152 @@
+local GameLoaders = getgenv().GameLoaders or {
+    [000000] = "https://your-script-link-here",
+    [000000] = "https://another-script-link-here",
+}
+
+
+
+
+
+-- ========================================
+-- FriedPotato notifications
+-- ========================================
+local Notify = getgenv().FriedPotatoNotify or (function()
+	local Notify = {}
+	do
+		local Theme = {
+			Background = Color3.fromRGB(10, 16, 28),
+			SubText = Color3.fromRGB(137, 158, 183),
+			Info = Color3.fromRGB(72, 145, 225),
+			Success = Color3.fromRGB(80, 200, 120),
+			Warning = Color3.fromRGB(240, 180, 60),
+			Error = Color3.fromRGB(235, 80, 80),
+		}
+		local FontTitle = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Bold)
+		local FontBody = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
+
+		local holder
+
+		local function create(className, properties, children)
+			local instance = Instance.new(className)
+			for property, value in properties do
+				instance[property] = value
+			end
+			for _, child in children or {} do
+				child.Parent = instance
+			end
+			return instance
+		end
+
+		local function ensureHolder()
+			if holder and holder.Parent then
+				return holder
+			end
+			local gui = create("ScreenGui", {
+				Name = "FriedPotatoNotifications",
+				ResetOnSpawn = false,
+				IgnoreGuiInset = true,
+				DisplayOrder = 1000,
+				ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+			})
+			gui.Parent = gethui()
+			holder = create("Frame", {
+				BackgroundTransparency = 1,
+				AnchorPoint = Vector2.new(1, 1),
+				Position = UDim2.new(1, -16, 1, -16),
+				Size = UDim2.new(0, 290, 1, -32),
+				Parent = gui,
+			}, {
+				create("UIListLayout", {
+					Padding = UDim.new(0, 8),
+					SortOrder = Enum.SortOrder.LayoutOrder,
+					VerticalAlignment = Enum.VerticalAlignment.Bottom,
+				}),
+			})
+			return holder
+		end
+
+		-- Notify.Send(title, content, duration, kind) -- kind: "Info" (default), "Success", "Warning" or "Error"
+		-- Clicking a notification closes it.
+		function Notify.Send(title, content, duration, kind)
+			local color = Theme[kind or "Info"] or Theme.Info
+			local card = create("TextButton", {
+				Text = "",
+				AutoButtonColor = false,
+				BackgroundColor3 = Theme.Background,
+				BackgroundTransparency = 0.05,
+				Size = UDim2.new(1, 0, 0, 0),
+				AutomaticSize = Enum.AutomaticSize.Y,
+			}, {
+				create("UICorner", { CornerRadius = UDim.new(0, 12) }),
+				create("UIStroke", { Color = color, Transparency = 0.3, Thickness = 1 }),
+				create("UIPadding", {
+					PaddingTop = UDim.new(0, 10),
+					PaddingBottom = UDim.new(0, 10),
+					PaddingLeft = UDim.new(0, 12),
+					PaddingRight = UDim.new(0, 12),
+				}),
+				create("UIListLayout", { Padding = UDim.new(0, 3), SortOrder = Enum.SortOrder.LayoutOrder }),
+				create("TextLabel", {
+					Text = tostring(title or "FriedPotato Hub"),
+					FontFace = FontTitle,
+					TextSize = 15,
+					TextColor3 = color,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					BackgroundTransparency = 1,
+					Size = UDim2.new(1, 0, 0, 18),
+					LayoutOrder = 1,
+				}),
+				content and content ~= "" and create("TextLabel", {
+					Text = tostring(content),
+					FontFace = FontBody,
+					TextSize = 14,
+					TextColor3 = Theme.SubText,
+					TextWrapped = true,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					BackgroundTransparency = 1,
+					Size = UDim2.new(1, 0, 0, 0),
+					AutomaticSize = Enum.AutomaticSize.Y,
+					LayoutOrder = 2,
+				}) or nil,
+			})
+			card.Parent = ensureHolder()
+			card.Activated:Connect(function()
+				card:Destroy()
+			end)
+			task.delay(tonumber(duration) or 5, function()
+				if card.Parent then
+					card:Destroy()
+				end
+			end)
+		end
+	end
+	getgenv().FriedPotatoNotify = Notify
+end)
+-- ========================================
+-- Loader
+-- ========================================
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+repeat task.wait() until game.GameId ~= 0
+local ScriptURL = GameLoaders[game.GameId]
+if not ScriptURL then
+    Notify.Send("FriedPotato Hub", "This game is not supported.", 6, "Warning")
+    return
+end
+local fetched, source = pcall(game.HttpGet, game, ScriptURL)
+if not fetched then
+    Notify.Send("FriedPotato Hub", "Could not download the script.", 6, "Error")
+    return
+end
+getgenv().SCRIPT_KEY = getgenv().SCRIPT_KEY or "FRIEDPOTATO HUB"
+local compiled, chunk = pcall(loadstring, source)
+if not (compiled and chunk) then
+    Notify.Send("FriedPotato Hub", "The script failed to compile.", 6, "Error")
+    return
+end
+local ran, err = pcall(chunk)
+if not ran then
+    Notify.Send("FriedPotato Hub", "The script errored while loading.", 6, "Error")
+    warn("[FriedPotatoHub] " .. tostring(err))
+end
