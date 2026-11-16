@@ -9,11 +9,11 @@ getgenv().GameLoaders = {
     [10766972131] = "https://api.jnkie.com/api/v1/luascripts/public/3ebaf12c88fae3f572d7793dce0aba192d5225f60fdbf9b64256587c4fa62622/download",
     -- Steal An Egg
     [10563114921] = "https://api.jnkie.com/api/v1/luascripts/public/30f7d9cb5779873280e3ddd3223b1c906de274b80abd03223d1f41fb738ea57e/download",
+    -- 99 Nights
+    [7326934954] = "https://api.jnkie.com/api/v1/luascripts/public/afa8c5af053cb5048c1b3d537168ab66c99dbe72c6dc15018be4a57a34df603b/download",
     -- Test
     [1234567890] = "Link",
 }
-
-
 
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/Friedpotato-Hub/refs/heads/main/Loader/Config.lua"))()
