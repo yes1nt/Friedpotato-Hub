@@ -13,7 +13,7 @@ getgenv().GameLoaders = {
     [7326934954] = "https://api.jnkie.com/api/v1/luascripts/public/afa8c5af053cb5048c1b3d537168ab66c99dbe72c6dc15018be4a57a34df603b/download",
     -- The Strongest Battlegrounds
     [3808081382] = "https://api.jnkie.com/api/v1/luascripts/public/b9daa0700c25fec9ca23762db7d3c8a6727d8c0db1b1a05a40e56a5c07ce62c8/download",
-    -- Test
+    -- Test setclipboard(game.GameId)
     [1234567890] = "Link",
 }
 
